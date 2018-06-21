@@ -1,0 +1,1 @@
+This is the version 1 of SpacePainter with all the basic functionalities working. It is the version used on the first presentation.
