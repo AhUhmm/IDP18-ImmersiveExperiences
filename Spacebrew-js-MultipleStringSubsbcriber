@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Spacebrew String</title>
+
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="http://spacebrew.github.io/spacebrew.js/spacebrew_string/css/reset.css" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="http://spacebrew.github.io/spacebrew.js/spacebrew_string/css/style.css" type="text/css" media="screen" charset="utf-8" />
+		<script type="text/javascript" src="http://spacebrew.github.io/spacebrew.js/spacebrew_string/js/jq.js"></script>
+		<script type="text/javascript" src="http://spacebrew.github.io/spacebrew.js/spacebrew_string/js/sb-1.4.1.js"></script>
+
+		<script type="text/javascript">
+		  
+			// when window loads call the setup method
+			$(window).on("load", setup);
+
+			// Spacebrew Object
+			var sb
+				, app_name = "string example"
+				;
+
+			/**
+			* setup Function that connect to spacebrew and creates a listener for clicks of the submit button.
+			*/
+			function setup (){
+				var random_id = "0000" + Math.floor(Math.random() * 10000)
+					;
+
+				app_name = app_name + ' ' + random_id.substring(random_id.length-4);
+
+				// setup spacebrew
+				sb = new Spacebrew.Client();  // create spacebrew client object
+
+				sb.name(app_name);
+				sb.description("This app sends text from an HTML form."); // set the app description
+
+		        // create the spacebrew subscription channels
+				// 
+
+				// Information from Device NO 1
+				sb.addSubscribe("text1", "string");		// create the subscription feed
+				sb.addSubscribe("text2", "string");		// create the subscription feed
+				sb.addSubscribe("text3", "string");		// create the subscription feed
+
+				// Information from Device NO2
+
+				sb.addSubscribe("text4", "string");		// create the subscription feed
+				sb.addSubscribe("text5", "string");		// create the subscription feed
+				sb.addSubscribe("text6", "string");		// create the subscription feed
+
+				// configure the publication and subscription feeds
+				sb.onStringMessage = onStringMessage;		
+				sb.onOpen = onOpen;
+
+				// connect to spacbrew
+				sb.connect();  
+
+				// listen to button clicks
+				$("#button").on("mousedown", onMouseDown);
+			}
+
+			/**
+			 * Function that is called when Spacebrew connection is established
+			 */
+			function onOpen() {
+				var message = "Connected as <strong>" + sb.name() + "</strong>. ";
+				if (sb.name() === app_name) {
+					message += "<br>You can customize this app's name in the query string by adding <strong>name=your_app_name</strong>."
+				}
+				$("#name").html( message );
+			}
+
+			/**
+			* onMouseDown Function that is called when the submit button is pressed. It reads the
+			*     text in the input box, and then sends it to spacebrew. It accepts a mouse event
+			*     object, though we don't use it in this example.
+			*/
+			function onMouseDown (evt){
+				var newString = $("#string").val();   // load text from input box
+				if (newString !== "") {               // if input box is not blank
+					console.log("Sending message " + newString); 
+					sb.send("text", "string", newString);   // send string to spacebrew
+					$("#string").val("");                   // clear the text box
+					$("#status").text(newString); // display the sent message in the browser         
+				}
+			}
+
+			/**
+			 * onStringMessage Function that is called whenever new spacebrew string messages are received.
+			 *          It accepts two parameters:
+			 * @param  {String} name    Holds name of the subscription feed channel
+			 * @param  {String} value 	Holds value received from the subscription feed
+			 */
+			 // if you get onStringMessage and it has name and value, then...
+
+			function onStringMessage( name, value ){
+				console.log("all message:",name, value);
+
+
+				// Information from Device NO 1
+
+				if (name == "text1") {
+    			$("#msg_received1").text(value);
+    			console.log ("1st DEVICE: message received")
+				}
+				else if (name == "text2") {
+				$("#msg_received2").text(value);
+				console.log ("1st DEVICE: 2nd message received")
+				}
+				else if (name == "text3"){
+				$("#msg_received3").text(value);
+				console.log ("1st DEVICE: 3rd message received")
+				}
+
+				// Information from Device NO 2
+				
+				if (name == "text4") {
+    			$("#msg_received4").text(value);
+    			console.log ("2nd DEVICE: message received")
+				}
+				else if (name == "text5") {
+				$("#msg_received5").text(value);
+				console.log ("2nd DEVICE: 2nd message received")
+				}
+				else if (name == "text6"){
+				$("#msg_received6").text(value);
+				console.log ("2nd DEVICE: 3rd message received")
+				}
+
+
+				//$("#msg_received").text(value); // display the sent message in the browser         
+			}
+
+	    </script>
+	</head>
+
+	<body>
+		
+				<h1>Device 1</h1><br>
+			
+				<h2> Position: <span id="msg_received1"/><br></h2>
+				<h2> Colour: <span id="msg_received2"/><br></h2>
+				<h2> Mode: <span id="msg_received3"/><br></h2> <br>
+
+				<hr><br><h1>Device 2</h1><br>
+			
+				<h2> Position: <span id="msg_received4"/><br></h2>
+				<h2> Colour: <span id="msg_received5"/><br></h2>
+				<h2> Mode: <span id="msg_received6"/><br></h2>
+			
+
+		</br></br>
+		<div id="name">Trying to connect</div>
+
+	</body>
+
+</html>
