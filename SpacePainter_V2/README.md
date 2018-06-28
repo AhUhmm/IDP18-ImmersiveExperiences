@@ -1,0 +1,1 @@
+This is the second version of SpacePainter, used for the last presentation.
